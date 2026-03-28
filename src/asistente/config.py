@@ -1,12 +1,22 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+def _env_files() -> tuple[Path, ...]:
+    """
+    Raíz del repo: src/asistente/config.py -> parents[2].
+    Así el .env se carga aunque uvicorn se ejecute desde otro cwd.
+    """
+    root = Path(__file__).resolve().parents[2]
+    return (root / ".env", Path(".env"))
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_env_files(),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -29,6 +39,16 @@ class Settings(BaseSettings):
         validation_alias="EMBEDDING_MODEL",
     )
     rag_top_k: int = Field(default=8, validation_alias="RAG_TOP_K")
+
+    # MQTT (domótica); si falta el host, no se publica
+    mqtt_broker_host: str | None = Field(default=None, validation_alias="MQTT_BROKER_HOST")
+    mqtt_broker_port: int = Field(default=1883, validation_alias="MQTT_BROKER_PORT")
+    mqtt_topic_prefix: str = Field(default="casa", validation_alias="MQTT_TOPIC_PREFIX")
+    mqtt_username: str | None = Field(default=None, validation_alias="MQTT_USERNAME")
+    mqtt_password: str | None = Field(default=None, validation_alias="MQTT_PASSWORD")
+    mqtt_client_id: str = Field(default="asistente-personal", validation_alias="MQTT_CLIENT_ID")
+    # Coma: comedor,dormitorio,cocina,salon — vacío = cualquier zona (sin restricción)
+    mqtt_home_zones: str = Field(default="", validation_alias="MQTT_HOME_ZONES")
 
 
 @lru_cache

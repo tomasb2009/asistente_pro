@@ -22,8 +22,7 @@ from asistente.tools.weather_time_window import (
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
 _DAILY_FIELDS = (
-    "weathercode,temperature_2m_max,temperature_2m_min,"
-    "windspeed_10m_max,relative_humidity_2m_mean"
+    "weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max,relative_humidity_2m_mean"
 )
 
 _HOURLY_FIELDS = (
@@ -147,8 +146,7 @@ def _format_answer(
     # Panorama diario solo si preguntan de forma amplia y el tramo es el día entero
     if g and tw_full_day and tmax_d is not None and tmin_d is not None:
         bits.append(
-            f"temperatura prevista para el día: máxima {tmax_d:.0f} °C, "
-            f"mínima {tmin_d:.0f} °C"
+            f"temperatura prevista para el día: máxima {tmax_d:.0f} °C, mínima {tmin_d:.0f} °C"
         )
 
     if show_rain_p and p_max is not None:
@@ -172,9 +170,7 @@ def _format_answer(
     if show_air and (ta_min is not None or ta_max is not None):
         if ta_min is not None and ta_max is not None:
             extra = f" (media {ta_mean:.0f} °C)" if ta_mean is not None else ""
-            bits.append(
-                f"temperatura del aire entre {ta_min:.0f} °C y {ta_max:.0f} °C{extra}"
-            )
+            bits.append(f"temperatura del aire entre {ta_min:.0f} °C y {ta_max:.0f} °C{extra}")
         elif ta_mean is not None:
             bits.append(f"temperatura del aire en torno a {ta_mean:.0f} °C")
 
@@ -236,16 +232,12 @@ async def fetch_weather_answer(
     daily = data.get("daily") or {}
     dates = daily.get("time") or []
     if merged >= len(dates):
-        return (
-            f"Le pido disculpas, señor; no dispongo del pronóstico para {target} en {display}."
-        )
+        return f"Le pido disculpas, señor; no dispongo del pronóstico para {target} en {display}."
 
     hourly = data.get("hourly") or {}
     times = hourly.get("time") or []
     if not times:
-        return (
-            f"Le pido disculpas, señor; no recibí datos horarios para {display}."
-        )
+        return f"Le pido disculpas, señor; no recibí datos horarios para {display}."
 
     tw_use = tw
     if merged == 0:

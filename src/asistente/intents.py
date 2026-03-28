@@ -7,3 +7,4 @@ class UserIntent(StrEnum):
     WEATHER = "weather"  # clima hoy o pronóstico
     TIME = "time"  # hora en una ciudad / zona
     GENERAL_KNOWLEDGE = "general_knowledge"  # cultura general → respuesta estilo Jarvis vía LLM
+    HOME_COMMAND = "home_command"  # domótica vía MQTT (luces, enchufes, etc.)

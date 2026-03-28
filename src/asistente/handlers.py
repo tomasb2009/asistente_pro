@@ -9,6 +9,7 @@ from asistente.intents import UserIntent
 from asistente.knowledge_chain import answer_general_knowledge
 from asistente.memory.long_term import retrieve_context
 from asistente.router import RoutedQuery
+from asistente.tools.home_reply import run_home_command
 from asistente.tools.local_time import fetch_local_time_answer
 from asistente.tools.weather import fetch_weather_answer
 
@@ -38,8 +39,8 @@ async def answer_weather(city: str | None, forecast_days_ahead: int = 0) -> str:
     )
 
 
-async def answer_time(city: str | None) -> str:
-    return await fetch_local_time_answer(_city_or_default(city))
+async def answer_time(city: str | None, user_message: str | None = None) -> str:
+    return await fetch_local_time_answer(_city_or_default(city), user_message=user_message)
 
 
 def answer_knowledge(
@@ -75,6 +76,13 @@ async def answer_from_routed(
         )
 
     if routed.intent == UserIntent.TIME:
-        return await fetch_local_time_answer(city)
+        return await fetch_local_time_answer(city, user_message=user_text)
+
+    if routed.intent == UserIntent.HOME_COMMAND:
+        return await run_home_command(
+            routed.home_zone,
+            routed.home_action,
+            user_message=user_text,
+        )
 
     return answer_knowledge(user_text, session_context=session_context)

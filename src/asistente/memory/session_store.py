@@ -60,6 +60,8 @@ class SessionStore:
                 intent=UserIntent(d["intent"]),
                 location=d.get("location"),
                 forecast_days_ahead=int(d.get("forecast_days_ahead") or 0),
+                home_zone=d.get("home_zone"),
+                home_action=d.get("home_action"),
             )
 
     def append_turn(
@@ -82,6 +84,8 @@ class SessionStore:
                 "intent": routed.intent.value,
                 "location": routed.location,
                 "forecast_days_ahead": routed.forecast_days_ahead,
+                "home_zone": routed.home_zone,
+                "home_action": routed.home_action,
             }
 
 
