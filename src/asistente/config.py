@@ -18,6 +18,18 @@ class Settings(BaseSettings):
     api_host: str = Field(default="0.0.0.0", validation_alias="API_HOST")
     api_port: int = Field(default=8000, validation_alias="API_PORT")
 
+    # Memoria de sesión (en RAM; se pierde al reiniciar el servidor)
+    session_ttl_seconds: int = Field(default=2700, validation_alias="SESSION_TTL_SECONDS")
+    session_max_turn_pairs: int = Field(default=12, validation_alias="SESSION_MAX_TURN_PAIRS")
+
+    # Memoria larga (Chroma en disco)
+    memory_dir: str = Field(default="./data/memory", validation_alias="MEMORY_DIR")
+    embedding_model: str = Field(
+        default="text-embedding-3-small",
+        validation_alias="EMBEDDING_MODEL",
+    )
+    rag_top_k: int = Field(default=8, validation_alias="RAG_TOP_K")
+
 
 @lru_cache
 def get_settings() -> Settings:

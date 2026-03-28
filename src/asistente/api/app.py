@@ -17,8 +17,8 @@ def create_app() -> FastAPI:
         title="Asistente personal",
         version=__version__,
         description=(
-            "Entrada única: GET `/query?message=...`. "
-            "Clima, hora y respuestas se resuelven en el servidor."
+            "GET `/query?message=...` — memoria de sesión en servidor y RAG "
+            "en conocimiento general."
         ),
     )
 

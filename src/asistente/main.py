@@ -11,7 +11,7 @@ import argparse
 import asyncio
 import sys
 
-from asistente.pipeline import run_pipeline
+from asistente.pipeline import run_pipeline_with_routing
 
 
 def main() -> None:
@@ -28,7 +28,8 @@ def main() -> None:
     if not text:
         parser.print_help()
         sys.exit(1)
-    reply = asyncio.run(run_pipeline(text))
+
+    _, reply = asyncio.run(run_pipeline_with_routing(text))
     print(reply)
 
 

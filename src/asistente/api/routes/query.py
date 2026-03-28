@@ -1,5 +1,5 @@
 """
-Única entrada HTTP pública: GET con el mensaje en query; el resto es lógica interna.
+Entrada común: GET con el mensaje; memoria de sesión única en el servidor.
 """
 
 from __future__ import annotations

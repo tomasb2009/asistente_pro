@@ -26,6 +26,18 @@ class RoutedQuery(BaseModel):
     )
 
 
+def _last_block(last: RoutedQuery | None) -> str:
+    if last is None:
+        return ""
+    loc = last.location or "(no indicó lugar antes)"
+    return (
+        f"Continuidad: la petición anterior fue «{last.intent.value}» "
+        f"(lugar previo: {loc}). "
+        "Si el usuario solo cambia de ciudad/país o dice «¿y mañana?», «¿y allí?», "
+        "mantené el MISMO tipo (hora o clima) salvo que pida explícitamente la otra cosa."
+    )
+
+
 _ROUTER_PROMPT = ChatPromptTemplate.from_messages(
     [
         (
@@ -39,7 +51,8 @@ _ROUTER_PROMPT = ChatPromptTemplate.from_messages(
             "dejá location en null (el sistema usará la ciudad por defecto).\n"
             "Para pronóstico, poné forecast_days_ahead solo como ayuda; "
             "el servidor recalcula día (lunes, mañana…) y franja horaria "
-            "(noche, tarde, entre las X y las Y).",
+            "(noche, tarde, entre las X y las Y).\n"
+            "{continuity}",
         ),
         ("human", "{message}"),
     ]
@@ -54,9 +67,24 @@ def build_router_llm(settings: Settings) -> ChatOpenAI:
     )
 
 
-def route_user_message(message: str) -> RoutedQuery:
+def route_user_message(
+    message: str,
+    session_context: str | None = None,
+    last_routed: RoutedQuery | None = None,
+) -> RoutedQuery:
     settings = get_settings()
     llm = build_router_llm(settings)
     structured = llm.with_structured_output(RoutedQuery)
     chain = _ROUTER_PROMPT | structured
-    return chain.invoke({"message": message})
+    text = message
+    if session_context:
+        text = (
+            "Historial reciente de esta conversación:\n"
+            f"{session_context}\n\n---\nPetición actual del usuario:\n{message}"
+        )
+    return chain.invoke(
+        {
+            "message": text,
+            "continuity": _last_block(last_routed),
+        }
+    )
