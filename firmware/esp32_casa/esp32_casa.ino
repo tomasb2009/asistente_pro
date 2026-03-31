@@ -15,7 +15,7 @@ static const char *WIFI_SSID = "TU_WIFI";
 static const char *WIFI_PASSWORD = "TU_CLAVE";
 
 // ---------- Broker (IP de la Raspberry con Mosquitto) ----------
-static const char *MQTT_HOST = "192.168.1.10";
+static const char *MQTT_HOST = "192.168.60.216";
 static const uint16_t MQTT_PORT = 1883;
 static const char *MQTT_USER = nullptr;
 static const char *MQTT_PASS = nullptr;
